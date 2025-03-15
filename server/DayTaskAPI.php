@@ -45,6 +45,18 @@ try {
             echo json_encode(['deleted' => $stmt->rowCount()]);
             break;
 
+                case 'delete':
+            if($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                http_response_code(405);
+                echo json_encode(['error' => '仅支持POST方法']);
+                break;
+            }
+            $id = $_REQUEST['id'];
+            $stmt = $conn->prepare("DELETE FROM daily_tasks WHERE id = ?");
+            $stmt->execute([$id]);
+            echo json_encode(['deleted' => $stmt->rowCount()]);
+            break;
+
         default:
             http_response_code(400);
             echo json_encode(['error' => '无效的操作类型']);

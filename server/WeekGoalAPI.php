@@ -20,7 +20,7 @@ try {
             $executor_id = $_POST['executor_id'];
             $weekly_goal = $_POST['weekly_goal'];
             $mondayDate = $_POST['mondayDate'];
-            
+            echo $executor_id;
             // 获取用户信息
             $userStmt = $conn->prepare("SELECT partner_name, department_id FROM users WHERE id = ?");
             $userStmt->execute([$executor_id]);
@@ -37,6 +37,22 @@ try {
                 $mondayDate
             ]);
             echo json_encode(['id' => $conn->lastInsertId()]);
+            break;
+
+                case 'update':
+            $id = $_REQUEST['id'];
+            $weekly_goal = $_REQUEST['weekly_goal'];
+            
+            $stmt = $conn->prepare("UPDATE weekly_goals SET weekly_goal = ? WHERE id = ?");
+            $stmt->execute([$weekly_goal, $id]);
+            echo json_encode(['updated' => $stmt->rowCount()]);
+            break;
+
+        case 'delete':
+            $id = $_REQUEST['id'];
+            $stmt = $conn->prepare("DELETE FROM weekly_goals WHERE id = ?");
+            $stmt->execute([$id]);
+            echo json_encode(['deleted' => $stmt->rowCount()]);
             break;
 
         default:

@@ -13,13 +13,25 @@ try {
             break;
 
         case 'create':
-            $date = $_POST['date'];
-            $executor_id = $_POST['executor_id'];
-            $goal_content = $_POST['goal_content'];
+            if($_SERVER['REQUEST_METHOD'] !== 'POST') {
+                http_response_code(405);
+                echo json_encode(['error' => '仅支持POST方法']);
+                break;
+            }
+            $date = $_REQUEST['date'];
+            $executor_id = $_REQUEST['executor_id'];
+            $goal_content = $_REQUEST['goal_content'];
             
             $stmt = $conn->prepare("INSERT INTO daily_goals (date, executor_id, goal_content) VALUES (?, ?, ?)");
             $stmt->execute([$date, $executor_id, $goal_content]);
             echo json_encode(['id' => $conn->lastInsertId()]);
+            break;
+
+        case 'complete':
+            $id = $_REQUEST['id'];
+            $stmt = $conn->prepare("UPDATE daily_goals SET is_completed = 1 WHERE id = ?");
+            $stmt->execute([$id]);
+            echo json_encode(['updated' => $stmt->rowCount()]);
             break;
 
         case 'update':
