@@ -1,4 +1,10 @@
 <?php
+header("Access-Control-Allow-Origin: http://localhost:5174");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Credentials: true");
+
+
 require __DIR__ . '/db_connect.php';
 
 $action = $_REQUEST['action'] ?? '';
@@ -39,12 +45,43 @@ try {
             echo json_encode(['id' => $conn->lastInsertId()]);
             break;
 
-                case 'update':
+        case 'update':
             $id = $_REQUEST['id'];
-            $weekly_goal = $_REQUEST['weekly_goal'];
-            
-            $stmt = $conn->prepare("UPDATE weekly_goals SET weekly_goal = ? WHERE id = ?");
-            $stmt->execute([$weekly_goal, $id]);
+            $updateFields = [];
+            $params = [];
+
+            // 收集需要更新的字段
+            if(!empty($_REQUEST['weekly_goal'])) {
+                $updateFields[] = 'weekly_goal = ?';
+                $params[] = $_REQUEST['weekly_goal'];
+            }
+            if(!empty($_REQUEST['executor_id'])) {
+                $updateFields[] = 'executor_id = ?';
+                $params[] = $_REQUEST['executor_id'];
+            }
+            if(!empty($_REQUEST['status'])) {
+                $updateFields[] = 'status = ?';
+                $params[] = intval($_REQUEST['status']);
+            }
+            if(!empty($_REQUEST['is_new_goal']) || $_REQUEST['is_new_goal'] === '0' || $_REQUEST['is_new_goal'] === '1') {
+
+                $updateFields[] = 'is_new_goal = ?';
+                $params[] = intval($_REQUEST['is_new_goal']);
+            }
+
+            // 参数有效性验证
+            if(empty($updateFields)) {
+                http_response_code(400);
+                echo json_encode(['error' => '至少需要提供一个更新字段']);
+                break;
+            }
+
+            // 构建动态SQL
+            $sql = "UPDATE weekly_goals SET " . implode(', ', $updateFields) . " WHERE id = ?";
+            $params[] = $id;
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
             echo json_encode(['updated' => $stmt->rowCount()]);
             break;
 

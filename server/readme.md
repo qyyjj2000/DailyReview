@@ -56,7 +56,7 @@ CREATE TABLE users (
 > 本项目是一个基于PHP的目标管理系统，使用MySQL数据库存储数据。
 > PHP接口需要同时支持POST和GET请求。支持跨域 
 
-## 1. 周目标  
+## 2. 周目标  
 ### 1.1 周目标的增删改查 WeekGoalAPI.php 
 ##### 1.1.1 查询weekly_goals表中的数据，通过PHP获取本周周一到日期，查询weekly_goals表中该周的周目标,需要通过查询结果，联表查询users和departments,获取到伙伴名称(partner_name)和部门名称（department_name）
 ##### 1.1.2 插入weekly_goals表中的数据，上传字段包括executor_id、weekly_goal、mondayDate、is_new_goal，通过executor_id，查询users和departments,获取到伙伴名称(executor)和部门ID（department_id），createtime由PHP来自动生成(如:20250310) 
@@ -78,3 +78,7 @@ CREATE TABLE users (
 ##### 3.1.2 插入daily_tasks表中的数据，上传字段包括date(DATE-mysql)、executor_id、task_content、is_new_task、progress、time_spent，如果上传的time_spent小于等于0，该条记录不入库
 ##### 3.1.3 更新daily_tasks表中的数据，通过id来更新数据，可以更新 task_content、is_new_task、progress、time_spent，如果上传的time_spent
 ##### 3.1.4 删除daily_tasks表中的数据，通过id来删除数据
+
+## 4. 用户和部门接口
+### 4.1 用户和部门查询 UserAPI.php
+### 4.2 通过部门ID查询用户信息(users关联字段department_id)

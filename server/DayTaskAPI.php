@@ -1,4 +1,6 @@
 <?php
+header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
+
 require __DIR__ . '/db_connect.php';
 
 $action = $_REQUEST['action'] ?? '';
